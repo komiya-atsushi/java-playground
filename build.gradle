@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.2.0"
+    }
+
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'me.champeau.gradle.jmh'
+apply plugin: 'java'
+
+group 'biz.k11i'
+version '0.0.1-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Hash functions
+    compile 'com.google.guava:guava:18.0'
+    compile 'net.jpountz.lz4:lz4:1.3.0'
+    compile 'net.openhft:zero-allocation-hashing:0.3'
+
+    compile 'org.openjdk.jmh:jmh-core:1.10.3'
+    compile 'org.openjdk.jmh:jmh-generator-annprocess:1.10.3'
+}
+
+jmh {
+    jmhVersion = '1.10.3'
+    benchmarkMode = 'thrpt'
+    warmup = '1s'
+    warmupIterations = 20
+    timeOnIteration = '1s'
+    iterations = 20
+    threads = 1
+    fork = 1
+    timeUnit = 'ms'
+    forceGC = true
+}
