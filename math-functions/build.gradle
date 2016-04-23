@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+    id 'me.champeau.gradle.jmh' version '0.3.0'
+    id 'net.ltgt.apt' version '0.3'
+}
+
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.apache.commons:commons-math3:3.6.1'
+    compile 'net.jafama:jafama:2.1.0'
+}
+
+jmh {
+    benchmarkMode = 'thrpt'
+    warmup = '1s'
+    warmupIterations = 20
+    timeOnIteration = '1s'
+    iterations = 20
+    threads = 1
+    fork = 1
+    timeUnit = 'ms'
+    forceGC = true
+}
