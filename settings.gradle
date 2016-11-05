@@ -2,4 +2,5 @@ rootProject.name = 'java-playground'
 include 'hash-functions'
 include 'math-functions'
 include 'jackson-performance'
+include 'approximate-gaussian-rng'
 
