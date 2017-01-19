@@ -91,6 +91,27 @@ public class MathBenchmark {
     }
 
     @State(Scope.Benchmark)
+    public static class ExpM1 {
+        @Param({"-1.234", "0.001234", "1.234", "123.4", "12340.0", "123.4e+300"})
+        public double val;
+
+        @Benchmark
+        public double commonsMath3() {
+            return org.apache.commons.math3.util.FastMath.expm1(val);
+        }
+
+        @Benchmark
+        public double jafama() {
+            return net.jafama.FastMath.expm1(val);
+        }
+
+        @Benchmark
+        public double jdk() {
+            return Math.expm1(val);
+        }
+    }
+
+    @State(Scope.Benchmark)
     public static class Sqrt {
         @Param({"0.001234", "1.234", "123.4", "12340.0", "123.4e+300"})
         public double val;
