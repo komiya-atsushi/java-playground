@@ -1,0 +1,33 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    compile group: 'org.openjdk.jol', name: 'jol-core', version: '0.8'
+
+    // cardinality estimation, frequency estimation, quantile estimation
+    compile group: 'com.addthis', name: 'stream-lib', version: '3.0.0'
+
+    // membership query
+    compile group: 'com.google.guava', name: 'guava', version: '23.0'
+
+    // cardinality estimation
+    compile group: 'net.agkn', name: 'hll', version: '1.6.0'
+
+    // quantile estimation
+    compile group: 'com.tdunning', name: 't-digest', version: '3.1'
+}
