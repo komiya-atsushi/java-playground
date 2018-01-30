@@ -5,4 +5,5 @@ include 'jackson-performance'
 include 'approximate-gaussian-rng'
 include 'probabilistic-data-structure'
 include 'maven-index'
+include 'string-bytecount'
 
