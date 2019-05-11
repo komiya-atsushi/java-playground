@@ -1,14 +1,6 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-    }
-}
-
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
-    id 'me.champeau.gradle.jmh' version '0.3.0'
+    id 'me.champeau.gradle.jmh'
     id 'net.ltgt.apt' version '0.3'
 }
 
@@ -24,7 +16,6 @@ dependencies {
 }
 
 jmh {
-    benchmarkMode = 'thrpt'
     warmup = '1s'
     warmupIterations = 20
     timeOnIteration = '1s'

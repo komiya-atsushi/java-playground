@@ -10,8 +10,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
-    id 'me.champeau.gradle.jmh' version '0.3.1'
+    id 'me.champeau.gradle.jmh'
     id 'net.ltgt.apt' version '0.3'
 }
 

@@ -1,17 +1,6 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-}
-
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
-    id 'me.champeau.gradle.jmh' version '0.3.1'
+    id 'me.champeau.gradle.jmh'
     id 'net.ltgt.apt' version '0.3'
 }
 
@@ -27,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: JACKSON_VERSION
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON_VERSION
-    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: JACKSON_VERSION
+    jmh group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: JACKSON_VERSION
+    jmh group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON_VERSION
+    jmh group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: JACKSON_VERSION
 
     jmh 'org.projectlombok:lombok:1.16.10'
 
