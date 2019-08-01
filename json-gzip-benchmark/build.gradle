@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'me.champeau.gradle.jmh'
+}
+
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.9'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: '2.9.9'
+}
+
+jmh {
+    resultFormat = 'CSV' // Result format type (one of CSV, JSON, NONE, SCSV, TEXT)
+    threads = 50 // Number of worker threads to run with.
+}
