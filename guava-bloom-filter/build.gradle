@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id 'me.champeau.gradle.jmh'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.google.guava', name: 'guava', version: '28.2-jre'
+}
+
+jmh {
+    timeUnit = 'ms'
+    resultFormat = 'CSV'
+}
