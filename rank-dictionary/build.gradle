@@ -4,6 +4,7 @@ plugins {
 }
 
 sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -32,6 +33,9 @@ test {
 }
 
 jmh {
+    jmhVersion = '1.23'
+    fork = 25
+    humanOutputFile = project.file("${project.buildDir}/reports/jmh/human.txt")
     timeUnit = 'ms'
     resultFormat = 'CSV'
 }
