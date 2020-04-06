@@ -10,4 +10,4 @@ include 'json-gzip-benchmark'
 include 'fork-join-examples'
 include 'guava-bloom-filter'
 include 'rank-dictionary'
-
+include 'population-count'
