@@ -36,4 +36,10 @@ public class Popcnt256Benchmark {
         int bitIndex = fillRandomValues();
         return Popcnt256.branchless(values, 0, bitIndex);
     }
+
+    @Benchmark
+    public long[] noop() {
+        fillRandomValues();
+        return values;
+    }
 }
