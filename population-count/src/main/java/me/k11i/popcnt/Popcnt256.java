@@ -36,8 +36,7 @@ public interface Popcnt256 {
 
         long mask0 = (0x7fff_ffff_ffff_ffffL | (b << 35)) >> rightShiftBits;
         long mask1 = ((0x7fff_ffff_ffff_ffffL | (b << 39)) + (b & 1)) >> rightShiftBits;
-        long mask2 = ((0x7fff_ffff_ffff_ffffL | (b << 43)) + ((b >>> 4) & 1))
-                >> rightShiftBits;
+        long mask2 = ((0x7fff_ffff_ffff_ffffL | (b << 43)) + ((b >>> 4) & 1)) >> rightShiftBits;
         long mask3 = ((0x7fff_ffff_ffff_ffffL | (b << 47)) + ((b >>> 8) & 1)) >> rightShiftBits;
 
         return Long.bitCount(values[offset] & mask0)
