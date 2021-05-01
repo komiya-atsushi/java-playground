@@ -1,9 +1,12 @@
 package me.k11i.suffixarray;
 
+import me.k11i.suffixarray.sais.SAIS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.SplittableRandom;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -15,7 +18,8 @@ class SuffixArrayTest {
     static final int SEED = 20210430;
 
     enum ConstructionAlgorithm {
-        NAIVE(Naive::build);
+        NAIVE(Naive::build),
+        SAIS_STRAIGHTFORWARD(SAIS.Straightforward::build);
 
         private final Function<String, SuffixArray> constructor;
 
@@ -29,7 +33,12 @@ class SuffixArrayTest {
     }
 
     void executeAndVerify(ConstructionAlgorithm alg, String text) {
-        SuffixArray sa = alg.build(text);
+        List<SuffixArray> result = new ArrayList<>();
+        assertThatCode(() -> result.add(alg.build(text)))
+                .describedAs("CA = %s, text = %s", alg, text)
+                .doesNotThrowAnyException();
+
+        SuffixArray sa = result.get(0);
         assertThat(sa.length()).isEqualTo(text.length());
 
         for (int i = 0; i < sa.length(); i++) {
@@ -72,10 +81,10 @@ class SuffixArrayTest {
     @ParameterizedTest
     @EnumSource(ConstructionAlgorithm.class)
     void randomBinaryText(ConstructionAlgorithm alg) {
-        RandomAlphanumericTextGenerator r = new RandomAlphanumericTextGenerator(SEED);
+        RandomTextGenerator r = new RandomTextGenerator(SEED, RandomTextGenerator.CHAR_TABLE_BINARY);
 
         for (int i = 0; i < 1000; i++) {
-            String text = r.generate(100, 2);
+            String text = r.generate(100);
             executeAndVerify(alg, text);
         }
     }
@@ -83,10 +92,10 @@ class SuffixArrayTest {
     @ParameterizedTest
     @EnumSource(ConstructionAlgorithm.class)
     void randomNumericText(ConstructionAlgorithm alg) {
-        RandomAlphanumericTextGenerator r = new RandomAlphanumericTextGenerator(SEED);
+        RandomTextGenerator r = new RandomTextGenerator(SEED, RandomTextGenerator.CHAR_TABLE_NUMERIC);
 
         for (int i = 0; i < 1000; i++) {
-            String text = r.generate(200, 10);
+            String text = r.generate(200);
             executeAndVerify(alg, text);
         }
     }
@@ -94,30 +103,46 @@ class SuffixArrayTest {
     @ParameterizedTest
     @EnumSource(ConstructionAlgorithm.class)
     void randomAlphanumericText(ConstructionAlgorithm alg) {
-        RandomAlphanumericTextGenerator r = new RandomAlphanumericTextGenerator(SEED);
+        RandomTextGenerator r = new RandomTextGenerator(SEED);
 
         for (int i = 0; i < 1000; i++) {
             String text = r.generate(200);
             executeAndVerify(alg, text);
         }
     }
+
+    @ParameterizedTest
+    @EnumSource(ConstructionAlgorithm.class)
+    void randomTextContainsNullCharacters(ConstructionAlgorithm alg) {
+        RandomTextGenerator r = new RandomTextGenerator(SEED, "\u0000abcd".toCharArray());
+
+        for (int i = 0; i < 1000; i++) {
+            String text = r.generate(100);
+            executeAndVerify(alg, text);
+        }
+    }
 }
 
-class RandomAlphanumericTextGenerator {
-    private static final char[] CHAR_TABLE = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-    private final SplittableRandom rng;
+class RandomTextGenerator {
+    static final char[] CHAR_TABLE_BINARY = "01".toCharArray();
+    static final char[] CHAR_TABLE_NUMERIC = "0123456789".toCharArray();
+    static final char[] CHAR_TABLE_ALPHANUMERIC = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-    RandomAlphanumericTextGenerator(int seed) {
-        rng = new SplittableRandom(seed);
+    private final SplittableRandom rng;
+    private final char[] charTable;
+
+    RandomTextGenerator(int seed) {
+        this(seed, CHAR_TABLE_ALPHANUMERIC);
+    }
+
+    RandomTextGenerator(int seed, char[] charTable) {
+        this.rng = new SplittableRandom(seed);
+        this.charTable = charTable;
     }
 
     String generate(int length) {
-        return generate(length, CHAR_TABLE.length);
-    }
-
-    String generate(int length, int alphabetSize) {
-        return rng.ints(length, 0, alphabetSize)
-                .map(v -> CHAR_TABLE[v])
+        return rng.ints(length, 0, charTable.length)
+                .map(v -> charTable[v])
                 .collect(StringBuilder::new,
                         (b, value) -> b.append((char) value),
                         StringBuilder::append)
