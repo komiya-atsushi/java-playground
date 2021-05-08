@@ -19,7 +19,8 @@ class SuffixArrayTest {
 
     enum ConstructionAlgorithm {
         NAIVE(Naive::build),
-        SAIS_STRAIGHTFORWARD(SAIS.Straightforward::build);
+        SAIS_STRAIGHTFORWARD(SAIS.Straightforward::build),
+        SAIS_MEMORY_EFFICIENT(SAIS.MemoryEfficient::build);
 
         private final Function<String, SuffixArray> constructor;
 

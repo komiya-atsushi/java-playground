@@ -174,4 +174,120 @@ public class SAIS {
             }
         }
     }
+
+    public static class MemoryEfficient extends Straightforward {
+        private static final MemoryEfficient INSTANCE = new MemoryEfficient();
+
+        public static SuffixArray build(String text) {
+            return INSTANCE._build(text);
+        }
+
+        void solveRecursive(Text text, IntArray sa) {
+            ScannedText scanned = ScannedText.scan(text);
+            Buckets buckets = scanned.newBuckets(sa);
+
+            sa.fill(-1);
+
+            // stage 1: reduce the problem by at least 1/2
+            putLMSIndices(text, buckets, scanned.iterateLMSIndices());
+            induceSort(scanned, sa, buckets);
+
+            // find the lexicographic names of LMS substrings
+            LMSText lmsText = constructLMSText(scanned, sa);
+
+            // stage 2: solve the reduced problem
+            IntArray lmsSA = solveReducedProblem(lmsText, sa.subArray(0, lmsText.length()));
+
+            // stage 3: induce the result for the original problem
+            putSortedLMSIndices(scanned, buckets, sa, lmsSA);
+            induceSort(scanned, sa, buckets);
+        }
+
+        LMSText constructLMSText(ScannedText text, IntArray sa) {
+            // compact all the sorted LMS substrings into the left side of the sa
+            for (int i = 0, j = 0; j < text.numLMS(); i++) {
+                int index = sa.get(i);
+                if (text.isLMS(index)) {
+                    sa.put(j++, index);
+                }
+            }
+
+            IntArray newTextChars = sa.subArray(text.numLMS());
+            newTextChars.fill(-1);
+
+            int prevIndex = -1;
+            int cardinality = 0;
+
+            for (int i = 0; i < text.numLMS(); i++) {
+                int index = sa.get(i);
+
+                if (prevIndex >= 0) {
+                    for (int d = 0; d < text.length(); d++) {
+                        if (text.charAt(index + d) != text.charAt(prevIndex + d)
+                                || text.isSType(index + d) != text.isSType(prevIndex + d)) {
+                            cardinality++;
+                            break;
+                        }
+                        if (d > 0 && (text.isLMS(index + d) || text.isLMS(prevIndex + d))) {
+                            break;
+                        }
+                    }
+                }
+
+                newTextChars.put(index >>> 1, cardinality);
+                prevIndex = index;
+            }
+
+            // compact characters of the reduced problem into the right side of the sa
+            for (int i = 0, j = 0; ; i++) {
+                int c = newTextChars.get(i);
+                if (c >= 0) {
+                    newTextChars.put(j++, c);
+                    if (j == text.numLMS()) {
+                        break;
+                    }
+                }
+            }
+
+            return new LMSText(newTextChars.subArray(0, text.numLMS()), cardinality + 1);
+        }
+
+        void putSortedLMSIndices(ScannedText text, Buckets buckets, IntArray sa, IntArray lmsSA) {
+            IntArray lmsIndices = text.listLMSIndices(sa.subArray(text.numLMS()));
+            for (int i = 0; i < lmsSA.length(); i++) {
+                lmsSA.put(i, lmsIndices.get(lmsSA.get(i)));
+            }
+
+            lmsIndices.fill(-1);
+
+            putLMSIndices(text, buckets, new SortedReverseIterator(lmsSA));
+        }
+
+        static class SortedReverseIterator implements LMSIndexIterator {
+            private final IntArray indices;
+            private int i;
+
+            /**
+             * @param indices sorted indices of the LMS suffix.
+             */
+            SortedReverseIterator(IntArray indices) {
+                this.indices = indices;
+                this.i = indices.length() - 1;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return i >= 0;
+            }
+
+            @Override
+            public int next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                return indices.getAndPut(i--, -1);
+            }
+        }
+    }
 }
